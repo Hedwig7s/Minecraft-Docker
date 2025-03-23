@@ -34,7 +34,10 @@ RUN apt-get update && \
 
 RUN chmod +x /main.sh
 
-RUN adduser --disabled-password --gecos "" minecraft
+RUN id ubuntu > /dev/null 2>&1 && deluser ubuntu
+RUN addgroup --gid 1000 minecraft
+RUN adduser --system --shell /bin/false --uid 1000 --ingroup minecraft --home /data minecraft
+RUN chown -R minecraft:minecraft /data && chmod -R 755 /data
 USER minecraft
 
 CMD ["/main.sh"]
