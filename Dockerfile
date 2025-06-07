@@ -29,7 +29,7 @@ COPY src/main.sh /main.sh
 
 # Update and install required packages
 RUN apt-get update && \
-    apt-get install -y unar findutils curl && \
+    apt-get install -y unar findutils dos2unix curl && \
     rm -rf /var/lib/apt/lists/*
 
 RUN chmod +x /main.sh
