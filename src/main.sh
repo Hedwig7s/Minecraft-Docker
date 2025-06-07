@@ -197,6 +197,7 @@ echo
 ##############################
 # For NeoForge, use its run.sh; for all others, execute java with our arguments.
 if [ "$SERVER_TYPE" == "neoforge" ]; then
+    dos2unix "$MCDIR/run.sh"
     chmod +x "$MCDIR/run.sh"
     exec "$MCDIR/run.sh" ${MC_POST_JAR_ARGS} --nogui
 else
