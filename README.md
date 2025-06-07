@@ -1,4 +1,4 @@
-Lazily combined version of my docker images using chatgpt
+Lazily combined version of my docker images using ChatGPT
 ChatGPT Readme:
 
 # Minecraft Server Docker Container
