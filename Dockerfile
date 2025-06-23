@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk
+FROM azul/zulu-openjdk-debian:21-jre
 
 EXPOSE 25565/tcp
 EXPOSE 8100/tcp
