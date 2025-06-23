@@ -24,7 +24,7 @@ ENV MC_VERSION=1.20.1 \
 VOLUME /data
 
 USER root
-WORKDIR /data
+WORKDIR /data 
 
 COPY src/main.sh /main.sh
 
