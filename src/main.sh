@@ -4,6 +4,7 @@
 # Supported server types:
 #   fabric    - FabricMC server
 #   purpur    - PurpurMC server
+#   leaf      - LeafMC server
 #   sponge    - SpongeVanilla server
 #   neoforge  - NeoForge server
 #   simple    - Generic jar server (set JAR variable)
@@ -19,7 +20,7 @@
 MCDIR="/data"
 MCTEMP="/server_tmp"
 
-# Which server to run (fabric, purpur, sponge, neoforge, simple)
+# Which server to run (fabric, purpur, leaf, sponge, neoforge, simple)
 : "${SERVER_TYPE:=fabric}"
 
 ##############################
@@ -87,6 +88,28 @@ case "$SERVER_TYPE" in
         if [ ! -e "$MCJAR" ]; then
             echo "Downloading Purpur jar..."
             GetFile "https://api.purpurmc.org/v2/purpur/${MC_VERSION}/latest/download" "$MCJAR"
+        fi
+        # Remove other jar files in the folder
+        find "$MCDIR" -maxdepth 1 -type f -name "*.jar" ! -wholename "$MCJAR" -exec rm {} +
+        ;;
+    leaf)
+        echo "###############################################"
+        echo "#   LeafMC - $(date)   #"
+        echo "###############################################"
+        echo "Initializing LeafMC server..."
+        MCJAR="$MCDIR/leafmc_${MC_VERSION}.jar"
+        MCARGS="-Xms${MC_RAM_XMS} -Xmx${MC_RAM_XMX} --add-modules=jdk.incubator.vector \
+-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 \
+-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch \
+-XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 \
+-XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 \
+-XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs \
+-Daikars.new.flags=true -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M \
+-XX:G1ReservePercent=20 ${MC_PRE_JAR_ARGS} -jar ${MCJAR} ${MC_POST_JAR_ARGS} --nogui"
+
+        if [ ! -e "$MCJAR" ]; then
+            echo "Downloading LeafMC jar..."
+            GetFile "https://api.leafmc.one/v2/projects/leaf/versions/$MC_VERSION/builds/$LEAF_VERSION/downloads/leaf-$MC_VERSION-$LEAF_VERsION.jar" "$MCJAR"
         fi
         # Remove other jar files in the folder
         find "$MCDIR" -maxdepth 1 -type f -name "*.jar" ! -wholename "$MCJAR" -exec rm {} +
