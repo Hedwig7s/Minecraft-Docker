@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jdk
 
 EXPOSE 25565/tcp
 EXPOSE 8100/tcp
