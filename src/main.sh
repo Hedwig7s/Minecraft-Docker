@@ -109,7 +109,7 @@ case "$SERVER_TYPE" in
 
         if [ ! -e "$MCJAR" ]; then
             echo "Downloading LeafMC jar..."
-            GetFile "https://api.leafmc.one/v2/projects/leaf/versions/$MC_VERSION/builds/$LEAF_VERSION/downloads/leaf-$MC_VERSION-$LEAF_VERsION.jar" "$MCJAR"
+            GetFile "https://api.leafmc.one/v2/projects/leaf/versions/$MC_VERSION/builds/$LEAF_VERSION/downloads/leaf-$MC_VERSION-$LEAF_VERSION.jar" "$MCJAR"
         fi
         # Remove other jar files in the folder
         find "$MCDIR" -maxdepth 1 -type f -name "*.jar" ! -wholename "$MCJAR" -exec rm {} +
