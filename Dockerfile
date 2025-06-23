@@ -18,6 +18,7 @@ ENV MC_VERSION=1.20.1 \
     SPONGE_TYPE=spongevanilla \
     SPONGE_VERSION=13.0.0 \
     NEOFORGE_VERSION=20.4.190 \
+    LEAF_VERSION=498
     JAR=""
 
 VOLUME /data
