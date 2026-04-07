@@ -1,11 +1,11 @@
-FROM azul/zulu-openjdk-debian:21-jre
+FROM azul/zulu-openjdk-alpine:25-jre
 
 EXPOSE 25565/tcp
 EXPOSE 8100/tcp
 EXPOSE 8080/tcp
 
 # Default environment variables
-ENV MC_VERSION=1.20.1 \
+ENV MC_VERSION=1.21.11 \
     MC_EULA=true \
     MC_RAM_XMS=1536M \
     MC_RAM_XMX=2048M \
@@ -13,11 +13,11 @@ ENV MC_VERSION=1.20.1 \
     MC_POST_JAR_ARGS="" \
     MC_URL_ZIP_SERVER_FIILES="" \
     FORCE_INSTALL="" \
-    FABRIC_INSTALLVER=1.0.1 \
+    FABRIC_INSTALLVER=1.1.1 \
     FABRIC_VERSION="" \
     SPONGE_TYPE=spongevanilla \
     SPONGE_VERSION=13.0.0 \
-    NEOFORGE_VERSION=20.4.190 \
+    NEOFORGE_VERSION=21.11.42 \
     LEAF_VERSION=498 \
     JAR=""
 
@@ -29,15 +29,17 @@ WORKDIR /data
 COPY src/main.sh /main.sh
 
 # Update and install required packages
-RUN apt-get update && \
-    apt-get install -y unar findutils dos2unix curl && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk update && apk add --no-cache \
+    unar \
+    findutils \
+    dos2unix \
+    curl
 
 RUN chmod +x /main.sh
 
 #RUN id ubuntu > /dev/null 2>&1 && deluser ubuntu
-RUN addgroup --gid 1000 minecraft
-RUN adduser --system --shell /bin/false --uid 1000 --ingroup minecraft --home /data minecraft
+RUN addgroup -g 1000 minecraft
+RUN adduser -S -s /bin/false -u 1000 -G minecraft -h /data minecraft
 RUN chown -R minecraft:minecraft /data && chmod -R 755 /data
 USER minecraft
 
