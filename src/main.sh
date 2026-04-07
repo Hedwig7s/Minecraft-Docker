@@ -192,7 +192,7 @@ esac
 ##############################
 # If a ZIP URL is provided, download and extract additional server files
 if GetFile "$MC_URL_ZIP_SERVER_FIILES" "$MCDIR/ZIP_SERVER_FILES"; then
-    unar "$MCDIR/ZIP_SERVER_FILES" -f
+    unzip -o "$MCDIR/ZIP_SERVER_FILES"
 fi
 
 # Accept the EULA if requested
