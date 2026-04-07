@@ -30,7 +30,7 @@ COPY src/main.sh /main.sh
 
 # Update and install required packages
 RUN apk update && apk add --no-cache \
-    unar \
+    unzip \
     findutils \
     dos2unix \
     curl
