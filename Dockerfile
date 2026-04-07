@@ -33,7 +33,8 @@ RUN apk update && apk add --no-cache \
     unzip \
     findutils \
     dos2unix \
-    curl
+    curl \
+    bash
 
 RUN chmod +x /main.sh
 
