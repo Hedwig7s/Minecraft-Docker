@@ -26,7 +26,7 @@ Below are the default environment variables that can be overridden at runtime:
 
 | Variable                  | Default Value  | Description |
 | ------------------------- | -------------- | ----------- |
-| `MC_VERSION`              | `1.20.1`       | Minecraft server version. |
+| `MC_VERSION`              | `1.21.11`       | Minecraft server version. |
 | `MC_EULA`                 | `true`         | Accept Minecraft's EULA (`true` or `false`). |
 | `MC_RAM_XMS`              | `1536M`        | Preallocated RAM for the server. |
 | `MC_RAM_XMX`              | `2048M`        | Maximum RAM for the server. |
@@ -34,11 +34,11 @@ Below are the default environment variables that can be overridden at runtime:
 | `MC_POST_JAR_ARGS`        | `""`           | Additional arguments to append after the jar in the launch command. |
 | `MC_URL_ZIP_SERVER_FIILES`| `""`           | URL to a ZIP file with extra server files. |
 | `FORCE_INSTALL`           | `""`           | Force the installation of a server jar/installer if set. |
-| `FABRIC_INSTALLVER`       | `1.0.1`        | Fabric installer version (used in FabricMC mode). |
+| `FABRIC_INSTALLVER`       | `1.1.1`        | Fabric installer version (used in FabricMC mode). |
 | `FABRIC_VERSION`          | `""`           | Fabric loader version. |
 | `SPONGE_TYPE`             | `spongevanilla`| Sponge server type (for SpongeVanilla mode). |
 | `SPONGE_VERSION`          | `13.0.0`       | Sponge server version. |
-| `NEOFORGE_VERSION`        | `20.4.190`     | NeoForge server version. |
+| `NEOFORGE_VERSION`        | `21.11.42`     | NeoForge server version. |
 | `JAR`                     | `""`           | Name of the jar file to use in simple mode. |
 | `SERVER_TYPE`             | `fabric`       | Server type to run: `fabric`, `purpur`, `sponge`, `neoforge`, or `simple`. |
 
