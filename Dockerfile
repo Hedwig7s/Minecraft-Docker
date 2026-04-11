@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:25-jre
+FROM container-registry.oracle.com/graalvm/jdk:25
 
 EXPOSE 25565/tcp
 EXPOSE 8100/tcp
@@ -28,19 +28,19 @@ WORKDIR /data
 
 COPY src/main.sh /main.sh
 
-# Update and install required packages
-RUN apk update && apk add --no-cache \
+RUN microdnf update -y && microdnf install -y \
     unzip \
     findutils \
     dos2unix \
     curl \
-    bash
+    bash \
+    && microdnf clean all
 
 RUN chmod +x /main.sh
 
-#RUN id ubuntu > /dev/null 2>&1 && deluser ubuntu
-RUN addgroup -g 1000 minecraft
-RUN adduser -S -s /bin/false -u 1000 -G minecraft -h /data minecraft
+RUN groupadd -g 1000 minecraft && \
+    useradd -r -u 1000 -g minecraft -d /data -s /sbin/nologin minecraft
+
 RUN chown -R minecraft:minecraft /data && chmod -R 755 /data
 USER minecraft
 
