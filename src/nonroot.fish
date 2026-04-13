@@ -76,10 +76,9 @@ else
     echo "Warning: MC_EULA not set to true."
 end
 
-set -q MC_RAM_XMS; or set MC_RAM_XMS 1G
-set -q MC_RAM_XMX; or set MC_RAM_XMX 1G
-set JAVA_OPTS (string split -n " " -- "-Xms$MC_RAM_XMS -Xmx$MC_RAM_XMX $JVM_COMMON $MC_PRE_JAR_ARGS")
-set POST_ARGS (string split " " "$MC_POST_JAR_ARGS")
+set -q MC_RAM_XMS; or set MC_RAM_XMS 2G
+set -q MC_RAM_XMX; or set MC_RAM_XMX 2G
+set JAVA_OPTS "-Xms$MC_RAM_XMS -Xmx$MC_RAM_XMX $JVM_COMMON $MC_PRE_JAR_ARG"
 
 echo "Starting server with: $MCJAR"
-exec java $JAVA_OPTS -jar $MCJAR $POST_ARGS --nogui
+exec sh -c "java $JAVA_OPTS -jar $MCJAR $MC_POST_JAR_ARGS --nogui"

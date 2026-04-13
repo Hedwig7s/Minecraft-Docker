@@ -2,7 +2,7 @@
 # ==============================
 # Global config
 # ==============================
-
+fish --version
 # --- Btrfs Backup Config ---
 set -q BACKUP_ENABLED; or set BACKUP_ENABLED false
 set -q BACKUP_DEST; or set BACKUP_DEST /backups
