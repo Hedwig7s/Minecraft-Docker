@@ -34,26 +34,26 @@ switch $SERVER_TYPE
     case fabric
         echo "Initializing Fabric..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-fabric --auto-update --minecraft-version $MC_VERSION --loader-version (set -q FABRIC_VERSION; and echo $FABRIC_VERSION; or echo latest) --output $MCDIR; or exit 1
+        mc-helper install-fabric --minecraft-version $MC_VERSION --loader-version (set -q FABRIC_VERSION; and echo $FABRIC_VERSION; or echo latest) --output $MCDIR; or exit 1
         set MCJAR (ls fabric-server-mc*.jar | head -n1)
     case paper purpur
         echo "Initializing $SERVER_TYPE..."
-        mc-helper install-$SERVER_TYPE --auto-update --version (set -q MC_VERSION; and echo $MC_VERSION; or echo latest) --build 0 --output $MCDIR; or exit 1
+        mc-helper install-$SERVER_TYPE --version (set -q MC_VERSION; and echo $MC_VERSION; or echo latest) --build 0 --output $MCDIR; or exit 1
         set MCJAR (ls $SERVER_TYPE-*.jar | head -n1)
     case forge
         echo "Initializing Forge..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-forge --auto-update --minecraft-version $MC_VERSION --forge-version (set -q FORGE_VERSION; and echo $FORGE_VERSION; or echo latest) --output $MCDIR; or exit 1
+        mc-helper install-forge --minecraft-version $MC_VERSION --forge-version (set -q FORGE_VERSION; and echo $FORGE_VERSION; or echo latest) --output $MCDIR; or exit 1
         set MCJAR (ls forge-*.jar | head -n1)
     case neoforge
         echo "Initializing NeoForge..."
         if not set -q MC_VERSION; or not set -q NEOFORGE_VERSION; echo "MC_VERSION/NEOFORGE_VERSION required"; exit 1; end
-        mc-helper install-neoforge --auto-update --minecraft-version $MC_VERSION --neoforge-version $NEOFORGE_VERSION --output $MCDIR; or exit 1
+        mc-helper install-neoforge --minecraft-version $MC_VERSION --neoforge-version $NEOFORGE_VERSION --output $MCDIR; or exit 1
         set MCJAR (ls neoforge-*.jar | head -n1)
     case quilt
         echo "Initializing Quilt..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-quilt --auto-update --minecraft-version $MC_VERSION --loader-version (set -q QUILT_VERSION; and echo $QUILT_VERSION; or echo latest) --output $MCDIR; or exit 1
+        mc-helper install-quilt --minecraft-version $MC_VERSION --loader-version (set -q QUILT_VERSION; and echo $QUILT_VERSION; or echo latest) --output $MCDIR; or exit 1
         set MCJAR (ls quilt-server-*.jar | head -n1)
     case simple
         set -q JAR; or begin; echo "JAR variable required"; exit 1; end
@@ -78,7 +78,7 @@ end
 
 set -q MC_RAM_XMS; or set MC_RAM_XMS 1G
 set -q MC_RAM_XMX; or set MC_RAM_XMX 1G
-set JAVA_OPTS (string split " " "-Xms$MC_RAM_XMS -Xmx$MC_RAM_XMX $JVM_COMMON $MC_PRE_JAR_ARGS")
+set JAVA_OPTS (string split -n " " -- "-Xms$MC_RAM_XMS -Xmx$MC_RAM_XMX $JVM_COMMON $MC_PRE_JAR_ARGS")
 set POST_ARGS (string split " " "$MC_POST_JAR_ARGS")
 
 echo "Starting server with: $MCJAR"
