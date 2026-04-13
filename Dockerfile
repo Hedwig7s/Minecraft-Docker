@@ -39,12 +39,13 @@ RUN chmod +x /*.fish
 RUN chmod +x /usr/bin/mc-helper
 
 RUN microdnf update -y && microdnf install -y oracle-epel-release-el10
-RUN microdnf update -y && microdnf install -y \
+RUN microdnf install -y \
     unzip \
     findutils \
     dos2unix \
     curl \
     fish \
+    bash \
     btrfs-progs \
     && microdnf clean all
 
