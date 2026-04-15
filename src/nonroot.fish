@@ -26,25 +26,34 @@ switch $SERVER_TYPE
     case fabric
         echo "Initializing Fabric..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-fabric --minecraft-version $MC_VERSION --loader-version (set -q FABRIC_VERSION; and echo $FABRIC_VERSION; or echo latest) --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-fabric --minecraft-version $MC_VERSION --loader-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case paper purpur
         echo "Initializing $SERVER_TYPE..."
         mc-helper install-$SERVER_TYPE --version (set -q MC_VERSION; and echo $MC_VERSION; or echo latest) --build 0 --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case forge
         echo "Initializing Forge..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-forge --minecraft-version $MC_VERSION --forge-version (set -q FORGE_VERSION; and echo $FORGE_VERSION; or echo latest) --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-forge --minecraft-version $MC_VERSION --forge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case neoforge
         echo "Initializing NeoForge..."
-        if not set -q MC_VERSION; or not set -q NEOFORGE_VERSION; echo "MC_VERSION/NEOFORGE_VERSION required"; exit 1; end
-        mc-helper install-neoforge --minecraft-version $MC_VERSION --neoforge-version $NEOFORGE_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
+        mc-helper install-neoforge --minecraft-version $MC_VERSION --neoforge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case quilt
         echo "Initializing Quilt..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-quilt --minecraft-version $MC_VERSION --loader-version (set -q QUILT_VERSION; and echo $QUILT_VERSION; or echo latest) --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-quilt --minecraft-version $MC_VERSION --loader-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case simple
         set -q JAR; or begin; echo "JAR variable required"; exit 1; end
         echo $JAR > $PATH_TEMP_FILE
+    case bungeecord
+        echo "Initializing BungeeCord..."
+        mc-helper install-bungeecord --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+    case velocity
+        echo "Initializing Velocity..."
+        mc-helper install-velocity --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+    case waterfall
+        echo "Initializing Waterfall..."
+        mc-helper install-waterfall --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case '*'
         echo "Unknown SERVER_TYPE: $SERVER_TYPE"; exit 1
 end

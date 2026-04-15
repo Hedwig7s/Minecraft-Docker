@@ -6,6 +6,7 @@ EXPOSE 8080/tcp
 
 # Default environment variables
 ENV MC_VERSION=1.21.11 \
+    SERVER_VERSION=latest \
     MC_EULA=true \
     MC_RAM_XMS=1536M \
     MC_RAM_XMX=2048M \
@@ -13,12 +14,7 @@ ENV MC_VERSION=1.21.11 \
     MC_POST_JAR_ARGS="" \
     MC_URL_ZIP_SERVER_FIILES="" \
     FORCE_INSTALL="" \
-    FABRIC_INSTALLVER=1.1.1 \
-    FABRIC_VERSION="" \
     SPONGE_TYPE=spongevanilla \
-    SPONGE_VERSION=13.0.0 \
-    NEOFORGE_VERSION=21.11.42 \
-    LEAF_VERSION=498 \
     JAR=""
 
 
