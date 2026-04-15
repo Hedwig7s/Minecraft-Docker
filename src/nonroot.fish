@@ -5,7 +5,6 @@
 # ==============================
 set -q SERVER_TYPE; or set SERVER_TYPE fabric
 set -q MCDIR; or set MCDIR "."
-# Define a temporary file to capture the path from mc-helper
 set PATH_TEMP_FILE (mktemp)
 
 # ==============================
@@ -66,7 +65,6 @@ if test -f "$PATH_TEMP_FILE"
     rm $PATH_TEMP_FILE # Clean up the temp file
 end
 
-# Final validation
 if test -z "$MC_START_PATH"; or not test -f "$MC_START_PATH"
     echo "Error: MC_START_PATH was not written or file does not exist."
     exit 1
@@ -87,11 +85,16 @@ set JAVA_OPTS "-Xms$MC_RAM_XMS -Xmx$MC_RAM_XMX $JVM_COMMON $MC_PRE_JAR_ARG"
 
 echo "Starting server via: $MC_START_PATH"
 
-# Execute based on file type
 if string match -q "*.sh" "$MC_START_PATH"
     # Execute Forge/NeoForge run scripts
     exec bash "$MC_START_PATH" $MC_POST_JAR_ARGS
 else
-    # Standard JAR execution
-    exec sh -c "java $JAVA_OPTS -jar $MC_START_PATH $MC_POST_JAR_ARGS --nogui"
+    if test "$SERVER_TYPE" = "bungeecord" -o \
+            "$SERVER_TYPE" = "velocity" -o \
+            "$SERVER_TYPE" = "waterfall" -o \
+            "$SERVER_TYPE" = "nanolimbo"
+        exec sh -c "java $JAVA_OPTS -jar $MC_START_PATH $MC_POST_JAR_ARGS"
+    else
+        exec sh -c "java $JAVA_OPTS -jar $MC_START_PATH $MC_POST_JAR_ARGS --nogui"
+    end
 end
