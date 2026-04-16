@@ -5,7 +5,14 @@
 # ==============================
 set -q SERVER_TYPE; or set SERVER_TYPE fabric
 set -q MCDIR; or set MCDIR "."
+set -q INSTALL_NEOFORGE_BETA; or set INSTALL_NEOFORGE_BETA "false"
+set INSTALL_NEOFORGE_BETA (string lower $INSTALL_NEOFORGE_BETA)
 set PATH_TEMP_FILE (mktemp)
+
+if test "$INSTALL_NEOFORGE_BETA" != "false"; and test "$INSTALL_NEOFORGE_BETA" != "true"
+    echo "Invalid INSTALL_NEOFORGE_BETA: $INSTALL_NEOFORGE_BETA"
+    exit 1
+end
 
 # ==============================
 # JVM Arguments
@@ -36,7 +43,7 @@ switch $SERVER_TYPE
     case neoforge
         echo "Initializing NeoForge..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-neoforge --minecraft-version $MC_VERSION --neoforge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-neoforge --install-beta=$INSTALL_NEOFORGE_BETA --minecraft-version $MC_VERSION --neoforge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
     case quilt
         echo "Initializing Quilt..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
