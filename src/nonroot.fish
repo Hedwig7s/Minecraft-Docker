@@ -28,40 +28,72 @@ set JVM_COMMON "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=20
 # ==============================
 # Installation Logic
 # ==============================
+set INSTALL_STATUS 0
+set SHOULD_RUN_INSTALLER 0
+
 switch $SERVER_TYPE
     case fabric
         echo "Initializing Fabric..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-fabric --minecraft-version $MC_VERSION --loader-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-fabric --minecraft-version $MC_VERSION --loader-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case paper purpur
         echo "Initializing $SERVER_TYPE..."
-        mc-helper install-$SERVER_TYPE --version (set -q MC_VERSION; and echo $MC_VERSION; or echo latest) --build 0 --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-$SERVER_TYPE --version (set -q MC_VERSION; and echo $MC_VERSION; or echo latest) --build 0 --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case forge
         echo "Initializing Forge..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-forge --minecraft-version $MC_VERSION --forge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-forge --minecraft-version $MC_VERSION --forge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case neoforge
         echo "Initializing NeoForge..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-neoforge --install-beta=$INSTALL_NEOFORGE_BETA --minecraft-version $MC_VERSION --neoforge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-neoforge --install-beta=$INSTALL_NEOFORGE_BETA --minecraft-version $MC_VERSION --neoforge-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case quilt
         echo "Initializing Quilt..."
         set -q MC_VERSION; or begin; echo "MC_VERSION required"; exit 1; end
-        mc-helper install-quilt --minecraft-version $MC_VERSION --loader-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-quilt --minecraft-version $MC_VERSION --loader-version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case simple
         set -q JAR; or begin; echo "JAR variable required"; exit 1; end
         echo $JAR > $PATH_TEMP_FILE
+        set INSTALL_STATUS 0
     case bungeecord
         echo "Initializing BungeeCord..."
-        mc-helper install-bungeecord --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-bungeecord --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case velocity
         echo "Initializing Velocity..."
-        mc-helper install-velocity --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-velocity --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case waterfall
         echo "Initializing Waterfall..."
-        mc-helper install-waterfall --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE; or exit 1
+        mc-helper install-waterfall --version $SERVER_VERSION --output $MCDIR --write-path-to $PATH_TEMP_FILE
+        set INSTALL_STATUS $status
     case '*'
         echo "Unknown SERVER_TYPE: $SERVER_TYPE"; exit 1
+end
+
+# ==============================
+# Handle mc-helper Exit Codes
+# ==============================
+if test $INSTALL_STATUS -eq 1
+    echo "Error: mc-helper failed with exit code 1"
+    exit 1
+else if test $INSTALL_STATUS -eq 0
+    echo "Info: Download completed successfully (exit code 0)"
+    # Only run installer for forge/neoforge when there's a fresh download
+    if test "$SERVER_TYPE" = "forge" -o "$SERVER_TYPE" = "neoforge"
+        set SHOULD_RUN_INSTALLER 1
+    end
+else if test $INSTALL_STATUS -eq 2
+    echo "Info: Jar is already up to date (exit code 2) - skipping installer"
+    set SHOULD_RUN_INSTALLER 0
+else
+    echo "Error: mc-helper failed with unexpected exit code $INSTALL_STATUS"
+    exit 1
 end
 
 # ==============================
@@ -75,6 +107,39 @@ end
 if test -z "$MC_START_PATH"; or not test -f "$MC_START_PATH"
     echo "Error: MC_START_PATH was not written or file does not exist."
     exit 1
+end
+
+# ==============================
+# Run Installer for Forge/NeoForge (only if fresh download)
+# ==============================
+if test $SHOULD_RUN_INSTALLER -eq 1
+    if string match -q "*installer*.jar" "$MC_START_PATH"
+        echo "Running $SERVER_TYPE installer: $MC_START_PATH"
+        java -jar "$MC_START_PATH" --install-server "$MCDIR"
+
+        if test $status -ne 0
+            echo "Error: $SERVER_TYPE installer failed"
+            exit 1
+        end
+
+        echo "Installer completed successfully"
+
+        # The installer produces a run script in the output directory
+        if test -f "$MCDIR/run.sh"
+            set MC_START_PATH "$MCDIR/run.sh"
+        else if test -f "$MCDIR/run.bat"
+            set MC_START_PATH "$MCDIR/run.sh"
+        else
+            echo "Warning: Could not find run.sh after installation, searching for server jar..."
+            set -l jar_file (find "$MCDIR" -maxdepth 1 -name "*.jar" -type f | grep -v installer | head -n 1)
+            if test -n "$jar_file"
+                set MC_START_PATH "$jar_file"
+            else
+                echo "Error: No server jar or run script found after installation"
+                exit 1
+            end
+        end
+    end
 end
 
 # ==============================
