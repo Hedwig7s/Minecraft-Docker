@@ -110,32 +110,49 @@ if test -z "$MC_START_PATH"; or not test -f "$MC_START_PATH"
 end
 
 # ==============================
-# Run Installer for Forge/NeoForge (only if fresh download)
+# Handle Installer for Forge/NeoForge
 # ==============================
-if test $SHOULD_RUN_INSTALLER -eq 1
+if test "$SERVER_TYPE" = "forge" -o "$SERVER_TYPE" = "neoforge"
     if string match -q "*installer*.jar" "$MC_START_PATH"
-        echo "Running $SERVER_TYPE installer: $MC_START_PATH"
-        java -jar "$MC_START_PATH" --install-server "$MCDIR"
+        # Determine if we need to run the installer
+        set NEED_INSTALL 0
 
-        if test $status -ne 0
-            echo "Error: $SERVER_TYPE installer failed"
-            exit 1
+        # Run installer on fresh download (exit code 0)
+        if test $SHOULD_RUN_INSTALLER -eq 1
+            echo "Running $SERVER_TYPE installer (fresh download): $MC_START_PATH"
+            set NEED_INSTALL 1
+        else
+            # Jar already up to date, but check if run.sh exists
+            if not test -f "$MCDIR/run.sh"
+                echo "Jar already up to date, but run.sh not found - attempting install..."
+                set NEED_INSTALL 1
+            end
         end
 
-        echo "Installer completed successfully"
+        # Execute installer if needed
+        if test $NEED_INSTALL -eq 1
+            java -jar "$MC_START_PATH" --install-server "$MCDIR"
 
-        # The installer produces a run script in the output directory
+            if test $status -ne 0
+                echo "Error: $SERVER_TYPE installer failed"
+                exit 1
+            end
+
+            echo "Installer completed successfully"
+        end
+
+        # Update server path to run.sh if it exists
         if test -f "$MCDIR/run.sh"
             set MC_START_PATH "$MCDIR/run.sh"
-        else if test -f "$MCDIR/run.bat"
-            set MC_START_PATH "$MCDIR/run.sh"
+            echo "Server path set to: $MC_START_PATH"
         else
-            echo "Warning: Could not find run.sh after installation, searching for server jar..."
+            echo "Warning: run.sh not found after installation, searching for server jar..."
             set -l jar_file (find "$MCDIR" -maxdepth 1 -name "*.jar" -type f | grep -v installer | head -n 1)
             if test -n "$jar_file"
                 set MC_START_PATH "$jar_file"
+                echo "Using server jar: $MC_START_PATH"
             else
-                echo "Error: No server jar or run script found after installation"
+                echo "Error: No server jar or run script found"
                 exit 1
             end
         end
