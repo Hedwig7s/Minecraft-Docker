@@ -29,18 +29,24 @@ RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/dow
     && chmod +x /usr/local/bin/gosu \
     && gosu nobody true
 
-COPY src/*.fish /
+COPY src/*.nu /
 COPY bin/mc-helper /usr/bin
-RUN chmod +x /*.fish
+RUN chmod +x /*.nu
 RUN chmod +x /usr/bin/mc-helper
 
 RUN microdnf update -y && microdnf install -y oracle-epel-release-el10
+RUN echo "[gemfury-nushell]" > /etc/yum.repos.d/fury-nushell.repo && \
+    echo "name=Gemfury Nushell Repo" >> /etc/yum.repos.d/fury-nushell.repo && \
+    echo "baseurl=https://yum.fury.io/nushell/" >> /etc/yum.repos.d/fury-nushell.repo && \
+    echo "enabled=1" >> /etc/yum.repos.d/fury-nushell.repo && \
+    echo "gpgcheck=0" >> /etc/yum.repos.d/fury-nushell.repo && \
+    echo "gpgkey=https://yum.fury.io/nushell/gpg.key" >> /etc/yum.repos.d/fury-nushell.repo
 RUN microdnf install -y \
     unzip \
     findutils \
     dos2unix \
     curl \
-    fish \
+    nushell \
     bash \
     btrfs-progs \
     && microdnf clean all
@@ -52,4 +58,4 @@ RUN groupadd -g 1000 minecraft && \
 RUN chown -R minecraft:minecraft /data && chmod -R 755 /data
 # USER minecraft
 
-CMD ["/main.fish"]
+CMD ["/main.nu"]
