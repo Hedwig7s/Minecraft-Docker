@@ -176,13 +176,12 @@ let MC_POST_JAR_ARGS = ($env.MC_POST_JAR_ARGS? | default "")
 let JAVA_OPTS = $"-Xms($MC_RAM_XMS) -Xmx($MC_RAM_XMX) ($JVM_COMMON) ($MC_PRE_JAR_ARG)"
 
 print $"Starting server via: ($env.MC_START_PATH)"
-
 if ($env.MC_START_PATH | str ends-with ".sh") {
-    ^bash $env.MC_START_PATH ...(($MC_POST_JAR_ARGS | split row " "))
+    exec bash $env.MC_START_PATH ...(($MC_POST_JAR_ARGS | split row " " | where $it != ""))
 } else {
     if $SERVER_TYPE in ["bungeecord" "velocity" "waterfall" "nanolimbo"] {
-        ^sh -c $"java ($JAVA_OPTS) -jar ($env.MC_START_PATH) ($MC_POST_JAR_ARGS)"
+        exec java ...($JAVA_OPTS | split row " " | where $it != "") -jar $env.MC_START_PATH ...($MC_POST_JAR_ARGS | split row " " | where $it != "")
     } else {
-        ^sh -c $"java ($JAVA_OPTS) -jar ($env.MC_START_PATH) ($MC_POST_JAR_ARGS) --nogui"
+        exec java ...($JAVA_OPTS | split row " " | where $it != "") -jar $env.MC_START_PATH ...($MC_POST_JAR_ARGS | split row " " | where $it != "") --nogui
     }
 }
